@@ -8,14 +8,15 @@ function addTask() {
         alert("Please enter a task!!");
         return;
     }
-
+    const baap =document.querySelector(".todobox");
+    baap.appendChild(newDiv);
     left.innerHTML = inputField.value;
     newDiv.appendChild(left);
     newDiv.appendChild(rightside);
     newDiv.className = "task";
 
-    createDeleteButton(newDiv, rightside);
     createEditButton(newDiv, left, rightside);
+    createDeleteButton(newDiv, rightside);
 
     const parent = document.querySelector(".todobox");
     parent.appendChild(newDiv);
