@@ -1,72 +1,58 @@
-function addTask() {
-    const newDiv = document.createElement("div");
-    const left = document.createElement("div");
-    const inputField = document.getElementById("newtask");
-    const rightside = document.createElement("div");
 
-    if (inputField.value.trim() === "") {
-        alert("Please enter a task!!");
-        return;
-    }
-    const baap =document.querySelector(".todobox");
-    baap.appendChild(newDiv);
-    left.innerHTML = inputField.value;
-    newDiv.appendChild(left);
-    newDiv.appendChild(rightside);
-    newDiv.className = "task";
+const express =require('express');
+const jwt=require("jsonwebtoken")
+const path = require('path');
+const cors=require('cors');
+const app=express();
+app.use(express.json());
 
-    createEditButton(newDiv, left, rightside);
-    createDeleteButton(newDiv, rightside);
-
-    const parent = document.querySelector(".todobox");
-    parent.appendChild(newDiv);
-    inputField.value = "";
-}
+app.use(cors());
+const todolist = []
 
 
-// ===========
 
+let cnt=0;
+app.post('/add',(req,res)=>{
+    const task=req.body.task;
+    todolist.push({
+        taks:task,
+        id:cnt
+    })
+    res.json({
+        msg:"Task has been added",
+        id:cnt
+    })
+    cnt++;
+console.log("from add sec:"); // checks the todo list 
+console.log(todolist);
 
-function createDeleteButton(taskDiv, parentElement) {
-    const del = document.createElement("button");
-    del.innerHTML = "Delete";
-    del.className = "delete-btn";
-    parentElement.appendChild(del);
-    del.onclick = () => {
-        taskDiv.parentElement.removeChild(taskDiv);
-    };
-}
+})
 
-
-// ============= 
-
-
-function createEditButton(taskDiv, left, parentElement) {
-    const edittask = document.createElement("button");
-    edittask.innerHTML = "Edit";
-    edittask.className = "edit-task";
-    parentElement.appendChild(edittask);
-
-    let isEditing = false;
-
-    edittask.onclick = () => {
-        if (!isEditing) {
-            isEditing = true;
-            const tempinput = document.createElement("input");
-            tempinput.value = left.innerHTML;
-            const ok = document.createElement("button");
-            ok.className = "done";
-            ok.innerHTML = "OK";
-
-            taskDiv.appendChild(tempinput);
-            taskDiv.appendChild(ok);
-
-            ok.onclick = () => {
-                left.innerHTML = tempinput.value;
-                taskDiv.removeChild(tempinput);
-                taskDiv.removeChild(ok);
-                isEditing = false;
-            };
+app.delete('/delete',(req,res)=>{
+    // const task=req.params.task;
+    const idtoRemove=req.params.id
+    console.log("id to remove is :")
+    console.log(idtoRemove);
+    const index=-1;
+    for(let i=0;i<todolist.length;i++){
+        if(todolist[i].id==idtoRemove) {
+            index=i;
+            break
         }
-    };
-}
+    }
+
+    todolist.splice(index,1);
+
+    res.send({
+        msg:"task has been removed"
+    })
+   
+
+
+console.log(`from delete sec`);
+console.log(todolist);
+
+})
+
+
+app.listen(3000);
