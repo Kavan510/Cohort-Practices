@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/axios/1.7.7/axios.min.js"></script>
+    <script>
+
+       async function signup(){
+
+        const username = document.getElementById("signup_username").value;
+        const password = document.getElementById("signup-passwd").value;
+
+        await axios.post("http://localhost:3000/signup",{
+            username:username,
+            password:password
+        })
+        alert("you are signed in!!");
+        
+        }
+
+        async function signin(){
+
+        const username = document.getElementById("signin-username").value;
+        const password = document.getElementById("signin-passwd").value;
+
+        const response = await axios.post("http://localhost:3000/signin",{
+            username:username,
+            password:password
+        })
+
+        localStorage.setItem("token",response.data.token); // imp for storing the token in locastorage of browser
+
+        alert("you are signed in!!");
+}
+
+async function getUserInformation() {
+    try {
+        const response = await axios.get("http://localhost:3000/me", {
+            headers: {
+                token: localStorage.getItem("token")
+            }
+        });
+
+        if (response.status === 200) {
+            // User is logged in
+            document.getElementById("information").innerHTML =
+                "Username: " + response.data.username + " Password: " + response.data.password;
+
+            // Hide the signup and login elements
+            const signupElement = document.getElementById("signup");
+            signupElement.style.display = 'none';
+
+            const loginElement = document.getElementById("signin");
+            if (loginElement) loginElement.style.display = 'none';
+
+            // Show the userinfo element
+            const userinfoElement = document.getElementById("userinfo");
+            userinfoElement.style.display = 'block';
+        }
+    } catch (error) {
+        // User is not logged in or request failed
+        const userinfoElement = document.getElementById("userinfo");
+        userinfoElement.style.display = 'none';
+
+        const signupElement = document.getElementById("signup");
+        signupElement.style.display = 'block';
+
+        const loginElement = document.getElementById("signin");
+        if (loginElement) loginElement.style.display = 'block';
+    }
+}
+
+getUserInformation();
+
+
+        function logout(){
+            localStorage.removeItem("token")
+        }
+    </script>
+</head>
+<body>
+    <div id="signup">
+        SignUp
+        <input id="signup_username" type="text" placeholder="Username">
+        <input id="signup-passwd" type="password" placeholder="password">
+        <button onclick="signup()">Submit</button>
+    </div>
+    <div id="signin">
+        SignIN
+        <input id="signin-username" type="text" placeholder="Username">
+        <input id="signin-passwd" type="password" placeholder="password">
+        <button onclick="signin()">SignIN</button>
+    </div>
+    <div id="userinfo">
+        User Information:
+        <div id="information"></div>
+    </div>
+    <div>
+        <button onclick="logout()"> Logout</button>
+    </div>
+</body>
+</html>
