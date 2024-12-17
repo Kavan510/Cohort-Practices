@@ -5,7 +5,7 @@ const jwt=require("jsonwebtoken");
 const bcrypt =require('bcrypt')
 const {z} =require("zod");
 
-mongoose.connect("mongodb+srv://kavanp7:FiAsPfUrGqFcFk8p@cluster0.xdxul.mongodb.net/todo-app-database");
+mongoose.connect("");
 
 const JWT_SECRET = "asisdvn";
 
